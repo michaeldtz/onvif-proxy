@@ -1,6 +1,7 @@
 import requests
 import signal
 import sys
+import ssl
 import urllib.parse
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
@@ -50,14 +51,21 @@ class ApiProxy:
                 #     self.send_header(key, headers[key])
                 # self.end_headers()
                 # self.wfile.write(resp.content)
-                #self.send_response(200)
-                #self.wfile.write(bytes("HALLO","utf-8"))
+                self.send_response(200)
+                self.end_headers()
+                self.wfile.write(bytes("HALLO","utf-8"))
 
             def _resolve_url(self):
                 return "http://www.google.de"
 
         server_address = ('', 8001)
         self.httpd = HTTPServer(server_address, ProxyHTTPRequestHandler)
+
+        self.httpd.socket = ssl.wrap_socket (self.httpd.socket, 
+            keyfile="keys/key.pem", 
+            certfile='keys/cert.pem', 
+            server_side=True)
+
         print('proxy server is running')
         self.httpd.serve_forever()
 
