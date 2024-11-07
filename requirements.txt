@@ -1,1 +1,4 @@
 requests
+ffmpeg
+opencv-python
+imutils
